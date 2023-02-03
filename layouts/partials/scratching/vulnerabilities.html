@@ -1,0 +1,17 @@
+{{ .Page.Scratch.Set "vulnerabilities_overview" (dict) }}
+
+{{/* Init labels */}}
+{{ $vulnerabilitiesScratch := newScratch }}
+
+{{ $vulnerabilityLabels := (slice "Critical" "High" "Medium" "Low" "Informational" "Undefined")}}
+{{ range $vulnerabilityLabels }}
+{{ $vulnerabilitiesScratch.Set . 0 }}
+{{ end }}
+
+{{ $values := slice }}
+{{ range $vuln := .Scratch.Get "vulnerabilities" }}
+{{ $vulnerabilitiesScratch.Set (title (lower $vuln.severity)) (add 1 ($vulnerabilitiesScratch.Get
+(title (lower $vuln.severity)) | default 0)) }}
+{{ end }}
+
+{{ .Page.Scratch.Set "vulnerabilities_overview" $vulnerabilitiesScratch.Values }}

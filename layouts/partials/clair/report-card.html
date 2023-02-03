@@ -1,0 +1,38 @@
+{{ partial "scratching/mapper.html" . }}
+
+<div class="card border-secondary">
+    <div class="card-body">
+        <h5 class="card-title">
+            {{ with ($.Scratch.Get "info") }}
+            <code>{{.image}}</code>
+            <small><span class="rounded-pill p-1 text-light bg-dark">{{ .version }}</span></small>
+            {{ end }}
+        </h5>
+        {{ partial "clair/vulnerability-chart.html" ($.Scratch.Get "vulnerabilities") }}
+        <p class="card-text">
+        <table>
+            <tr>
+                <th>Id</th>
+                <th>Package</th>
+                <th>Security</th>
+                <th>Description</th>
+            </tr>
+            {{ range $vuln := $.Scratch.Get "vulnerabilities" }}
+            {{/*
+            <pre>
+            {{ $details | jsonify (dict "indent" " ") }}
+            </pre>
+            */}}
+            <tr>
+                <td><a href={{ index (split $vuln.uri " " ) 0 }} target="blank">{{ $vuln.name }}</a></td>
+                <td>
+                </td>
+                <td><span class="rounded-pill p-1 bg-{{ $vuln.severity | lower }}">{{
+                        $vuln.severity }}</span></td>
+                <td>{{ $vuln.description }}</td>
+            </tr>
+            {{ end }}
+        </table>
+        </p>
+    </div>
+</div>

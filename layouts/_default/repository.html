@@ -1,0 +1,11 @@
+{{ define "header_css" }}{{ end }}
+{{ define "body_classes" }}page-default-list{{ end }}
+{{ define "header_classes" }}{{ end }}
+
+{{ define "main" }}
+<h1 class="title">Repository Overview - <code>{{ .Title }}</code></h1>
+<h2></h2>
+<div class="content">
+    {{ partial "clair/report-summary.html" . }}
+</div>
+{{ end }}

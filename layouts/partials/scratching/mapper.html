@@ -1,0 +1,27 @@
+{{/* Build report */}}
+{{ .Page.Scratch.Set "vulnerabilities" (slice) }}
+{{ .Page.Scratch.Set "info" (dict) }}
+
+{{/* Deal with Clair V4 report format */}}
+{{ if (eq .Params.scan_type "clair") }}
+
+{{ with (index (index $.Site.Data .Params.scan_type) (strings.TrimSuffix ".json" .Params.scan_report)) }}
+{{ range $id, $vuln := .vulnerabilities }}
+{{ $.Page.Scratch.Add "vulnerabilities" (slice $vuln) }}
+{{ end }}
+{{ end }}
+
+{{/* Deal with ECR report format */}}
+{{ else if (eq .Params.scan_type "ecr") }}
+
+{{ with (index (index $.Site.Data .Params.scan_type) (strings.TrimSuffix ".json" .Params.scan_report)) }}
+{{ $.Page.Scratch.Set "info" (dict "registry" .registryId "image" .repositoryName "version"
+.imageId.imageTag "date" .imageScanFindings.imageScanCompletedAt)
+}}
+
+{{ range .imageScanFindings.findings }}
+{{ $.Page.Scratch.Add "vulnerabilities" . }}
+{{ end }}
+{{ end }}
+
+{{ end }}
