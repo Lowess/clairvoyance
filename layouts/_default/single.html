@@ -1,0 +1,13 @@
+{{ define "header_css" }}{{ end }}
+{{ define "body_classes" }}page-default-list{{ end }}
+{{ define "header_classes" }}{{ end }}
+
+{{ define "main" }}
+<h3 class="title">{{ index (split .Title " ") 0 }}
+  <span class="badge rounded-pill p-1 bg-primary">{{ index (split .Title " ") 1 }}</span>
+</h3>
+<div class="content">
+  <h1>Reports</h1>
+  {{ partial "clair/report-card.html" . }}
+</div>
+{{ end }}

@@ -1,0 +1,38 @@
+{{ define "header_css" }}{{ end }}
+{{ define "body_classes" }}page-default-list{{ end }}
+{{ define "header_classes" }}{{ end }}
+
+{{ define "main" }}
+
+<h1 class="title">{{ .Title }}</h1>
+<div class="content">
+  <div class="container overflow-hidden text-center">
+    <div class="row">
+      {{ range .Pages.GroupBy "Title" }}
+      {{ $repo := .Key }}
+      {{ range .Pages }}
+      <div class="col">
+        <div class="card border p-2">
+          <div class="card-body">
+            <h4>{{ emojify ":package:" }} {{ truncate 15 $repo }}</h4>
+
+            <div class="row">
+              <div class="col-md-6">
+
+                <a class="button text-light bg-primary p-2" style="text-decoration: none;" href="{{ .RelPermalink }}">
+                  <span class="badge text-light bg-dark font-weight-bold p-1">{{ len .Pages }}</span> Scan
+                  reports {{
+                  emojify ":mag_right:" }}
+                </a>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {{ end }}
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}

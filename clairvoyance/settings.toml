@@ -1,0 +1,60 @@
+################################################
+### Clairvoyance Application specific settings
+################################################
+
+[default.ecr]
+# The private ECR registry ID to scan reports from
+registry_id = "123456789012"
+repositories = [
+    "path/to/your/container",
+]
+
+allowed_tag_patterns = [
+    # Production images:  vX.Y.Z or X.Y.Z
+    "(v)?\\d\\.\\d\\.\\d",
+    # Staging images
+    "stage",
+    # Everything
+    ".*"
+]
+
+[[default.notifiers]]
+type = "stdout"
+
+## Turns on SNS notifications
+# [[default.notifiers]]
+# type = "sns"
+# topic_arn = "arn:aws:sns:us-east-1:123456789012:topic"
+
+################################################
+### Advanced section
+################################################
+
+### Logging
+[default.logging]
+version = 1
+disable_existing_loggers = true
+formatters.javastyle.format = "%(asctime)s,%(msecs)03d %(levelname)8s %(name)s %(filename)s:%(lineno)d - %(message)s"
+formatters.javastyle.datefmt = "%Y-%m-%d %H:%M:%S"
+handlers.console.class = "logging.StreamHandler"
+handlers.console.formatter = "javastyle"
+handlers.console.level = "DEBUG"
+handlers.console.stream = "ext://sys.stdout"
+root.handlers = ["console"]
+root.level = "INFO"
+# First party loggers
+loggers.ecr.level = "INFO"
+# Third party loggers
+loggers.botocore.level = "INFO"
+loggers.urllib3.level = "ERROR"
+loggers.s3transfert.level = "ERROR"
+
+### settings.toml [development] configuration used by unittests
+[development]
+logging__loggers__ecr__level = "DEBUG"
+# Nice colors in dev only (pip install colorlog)
+"logging__formatters__colored__()" = "colorlog.ColoredFormatter"
+logging__formatters__colored__format = "%(cyan)s%(asctime)s,%(msecs)03d%(reset)s %(bold_yellow)s %(levelname)8s%(reset)s %(purple)s%(filename)s:%(lineno)d%(reset)s - %(message_log_color)s%(message)s"
+logging__formatters__colored__log_colors = { DEBUG = "green", INFO = "white", WARNING =  "yellow", ERROR = "red", CRITICAL = "red,bg_white" }
+logging__formatters__colored__secondary_log_colors__message = { DEBUG = "green", INFO = "white", WARNING =  "yellow", ERROR = "red", CRITICAL = "red,bg_white" }
+logging__handlers__console__formatter = "colored"

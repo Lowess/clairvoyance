@@ -1,0 +1,54 @@
+baseURL = "localhost:1313"
+languageCode = "en-us"
+title = "Unraid Docs"
+theme = "hugo-whisper-theme"
+enableEmoji = true
+pygmentsCodeFences = true
+pygmentsCodefencesGuessSyntax = true
+pygmentsUseClasses = true
+
+[module]
+  [module.hugoVersion]
+    extended = true
+    min = "0.55.0"
+
+# Controls how many words are printed in the content summary on the docs homepage.
+# See https://gohugo.io/content-management/summaries/
+summaryLength = 30
+
+[[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+
+[[menu.main]]
+    name = "Reports"
+    url = "reports/"
+    weight = 2
+
+[params]
+  google_analytics_id=""
+  homepage_button_link = 'reports/'
+  homepage_button_text = 'Access Scan reports'
+  homepage_intro = ''
+  homepage_image = 'images/clairvoyance.excalidraw.png'
+
+  [params.clairvoyance]
+    repository_overview_reports = 10
+  ## You can enable to add anchor links to header elements
+  # enable_anchor_link = true
+
+  [params.homepage_meta_tags]
+    meta_description = " Clairvoyance is a simple Hugo website with capabilities to parse ECR Security Scan reports"
+    meta_og_title = "Clairvoyance"
+    meta_og_type = "website"
+    meta_og_url = "https://lowess.github.io/clairvoyance/"
+    meta_og_image = "https://raw.githubusercontent.com/Lowess/clairvoyance/main/docs/clairvoyance.excalidraw.png"
+    meta_og_description = "Clairvoyance is a simple Hugo website with capabilities to parse ECR Security Scan reports."
+    meta_twitter_card = "summary"
+    meta_twitter_site = "@DambrineF"
+    meta_twitter_creator = "@DambrineF"
+
+  [params.logo]
+      mobile = "images/logo-mobile.svg"
+      standard  = "images/logo.svg"

@@ -1,0 +1,90 @@
+{{/* Init variables */}}
+{{ $id := delimit (shuffle (seq 1 9)) "" }}
+{{ $datasetScratch := newScratch }}
+{{ $dataset := slice }}
+{{ $labels := slice }}
+{{ $backgroundColor := (dict "Critical" "#ff7169" "High" "#ffa178" "Medium" "#ffca93" "Low" "#ffe3af" "Informational"
+"#cee8f0" "Undefined" "#ddd") }}
+
+{{/* Loop through the X latest images to build overivew chart */}}
+{{ range first .Site.Params.clairvoyance.repository_overview_reports .Pages }}
+{{ partial "scratching/mapper.html" . }}
+{{ partial "scratching/vulnerabilities.html" . }}
+
+{{ $labels = $labels | append (.Scratch.Get "info").version }}
+
+{{ range $severity, $count := .Page.Scratch.Get "vulnerabilities_overview" }}
+{{ $datasetScratch.Set $severity (append $count (default slice ($datasetScratch.Get $severity))) }}
+{{ end }}
+{{ end }}
+
+{{/* Prepare dataset to pass to ChartJS */}}
+
+{{ range $k, $v := $datasetScratch.Values }}
+{{ $dataset = $dataset | append (dict "label" $k "data" $v "stack" $k "backgroundColor" (index $backgroundColor $k)) }}
+{{ end }}
+
+<style>
+    .vulnerability-chart {
+        display: inline-block;
+        position: relative;
+        width: 300px;
+    }
+</style>
+
+<div class="w-100 mx-auto">
+    <canvas id="{{ $id }}"></canvas>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+<script>
+    function renderChart(id, label_values, values) {
+        const labels = label_values;
+
+        const data = {
+            labels: labels,
+            datasets: values
+        };
+
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'CVE Findings Over Time'
+                    },
+                },
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true
+                    }
+                }
+            }
+        };
+
+        const myChart = new Chart(
+            document.getElementById(id),
+            config
+        );
+    }
+    renderChart("{{ $id }}", {{ $labels }}, {{ $dataset }});
+</script>
+
+<hr />
+<h3><u>Monthly reports</u></h3>
+<ul>
+    {{ range .Pages.GroupByDate "2006 January" }}
+    <h4>{{ .Key }}</h4>
+    {{ range .Pages }}
+    <li><a href={{ .RelPermalink }}><code>{{ .Title }}</code> ({{ .Date | time.Format ":date_long" }})</a></li>
+    {{ end }}
+    <hr />
+    {{ end }}
+</ul>

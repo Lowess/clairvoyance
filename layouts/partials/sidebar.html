@@ -1,0 +1,18 @@
+{{$currentNode := .}}
+<div class="docs-menu">
+  <h4><a href={{ .Site.Params.homepage_button_link | relURL }}>{{ .Section | humanize }}</a></h4>
+
+  {{ $pages := .Pages }}
+  {{ if (eq (len .Pages) 0) }}
+  {{ $pages = .Page.Parent.Pages }}
+  {{ end }}
+  <ul>
+    {{ range $pages }}
+    {{ if (or (eq .Section "reports") (not (isset .Params `scan_type`))) }}
+    <li class="{{ if eq .File.UniqueID $currentNode.File.UniqueID }}active {{ end }}">
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+    </li>
+    {{ end }}
+    {{ end }}
+  </ul>
+</div>
