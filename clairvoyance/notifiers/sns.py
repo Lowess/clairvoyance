@@ -1,4 +1,6 @@
+import json
 import logging
+from typing import Any, Dict
 
 import boto3
 
@@ -21,11 +23,11 @@ class SnsNotifier(Notifier):
             f"to SNS topic: {self._topic_arn}"
         )
 
-    def send(self, subject: str, message: str) -> None:
+    def send(self, subject: str, message: Dict[str, Any]) -> None:
         response = self._sns.publish(
             TopicArn=self._topic_arn,
             Subject=subject,
-            Message=message,
+            Message=json.dumps(message, default=str),
         )
         self.__logger.info(
             f"SNS notification {response['MessageId']} delivered {message}"
