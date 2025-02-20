@@ -2,6 +2,14 @@
 ### Clairvoyance Application specific settings
 ################################################
 
+[default.tracking]
+jira_project_id = "ABC"
+
+[default.reporter]
+# One of from 'trivy' or 'native'
+scanner = "trivy"
+options = ["--ignore-unfixed", "--severity", "CRITICAL,HIGH", "--vuln-type", "os,library"]
+
 [default.ecr]
 # The private ECR registry ID to scan reports from
 registry_id = "123456789012"
@@ -25,6 +33,11 @@ type = "stdout"
 # [[default.notifiers]]
 # type = "sns"
 # topic_arn = "arn:aws:sns:us-east-1:123456789012:topic"
+
+## Turns on Google PubSub notifications
+# [[default.notifiers]]
+# type = "pubsub"
+# topic_arn = "projects/<GCP_PROJECT_ID>/topics/<PUBSUB_TOPIC_NAME>"
 
 ################################################
 ### Advanced section

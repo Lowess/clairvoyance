@@ -7,8 +7,8 @@ from typing import List
 import click
 
 from clairvoyance import settings
-from clairvoyance.notifiers import Notifier, SnsNotifier, StdoutNotifier
-from clairvoyance.reporters import EcrReporter, Reporter
+from clairvoyance.notifiers import Notifier, PubSubNotifier, SnsNotifier, StdoutNotifier
+from clairvoyance.reporters import EcrNativeReporter, EcrTrivyReporter, Reporter
 
 logger = logging.getLogger(__name__)
 
@@ -51,12 +51,16 @@ class Clairvoyance:
     def notify(self):
         for notifier in self._notifiers:
             for finding in self._findings:
-                subject = (
-                    f"{finding['repositoryName']}:{finding['imageId']['imageTag']}"
-                )
+                subject = "Clairvoyance scan available"
+                if settings.REPORTER.SCANNER == "trivy":
+                    subject = f"{finding['imagePath']}:{finding['commitHash']}"
+                else:
+                    subject = (
+                        f"{finding['repositoryName']}:{finding['imageId']['imageTag']}"
+                    )
                 notifier.send(
                     subject=subject,
-                    message=json.dumps(finding, default=str),
+                    message=finding,
                 )
 
 
@@ -65,18 +69,34 @@ def init(report_folder=""):
         # Fire the validator
         settings.validators.validate()
 
-        reporter = EcrReporter(
-            registry_id=settings.ECR.REGISTRY_ID,
-            repositories=settings.ECR.REPOSITORIES,
-            allowed_tag_patterns=settings.ECR.ALLOWED_TAG_PATTERNS,
-            report_folder=report_folder,
-        )
-
+        reporter = None
+        reporter_common_params = {
+            "registry_id": settings.ECR.REGISTRY_ID,
+            "repositories": settings.ECR.REPOSITORIES,
+            "allowed_tag_patterns": settings.ECR.ALLOWED_TAG_PATTERNS,
+            "report_folder": report_folder,
+        }
+        if settings.REPORTER.SCANNER == "trivy":
+            reporter = EcrTrivyReporter(
+                **{
+                    **reporter_common_params,
+                    **{"trivy_options": settings.REPORTER.OPTIONS},
+                }
+            )
+        else:
+            reporter = EcrNativeReporter(**reporter_common_params)
         notifiers = []
 
         for notifier in settings.NOTIFIERS:
             if notifier.TYPE == "sns":
                 notifiers.append(SnsNotifier(topic_arn=notifier.TOPIC_ARN))
+            elif notifier.TYPE == "pubsub":
+                notifiers.append(
+                    PubSubNotifier(
+                        jira_project_id=settings.TRACKING.JIRA_PROJECT_ID,
+                        topic_arn=notifier.TOPIC_ARN,
+                    )
+                )
             elif notifier.TYPE == "stdout":
                 notifiers.append(StdoutNotifier())
 
@@ -97,27 +117,27 @@ def cli(ctx):
 
 
 @cli.command()
-def scan_and_report():
+@click.option(
+    "--report-to",
+    default="",
+    required=False,
+    help="Folder where Hugo content and data will be generated.",
+)
+def scan_and_report(report_to):
     """
     Run a scan and generate Hugo content and data.
     """
-    clairvoyance = init()
+    clairvoyance = init(report_folder=report_to)
     clairvoyance.scan()
     clairvoyance.report()
 
 
 @cli.command()
-@click.option(
-    "report-to",
-    default="",
-    required=False,
-    help="Folder where Hugo content and data will be generated.",
-)
-def scan_only(report_to):
+def scan_only():
     """
     Run a scan on ECR registry.
     """
-    clairvoyance = init(report_folder=report_to)
+    clairvoyance = init()
     clairvoyance.scan()
 
 
