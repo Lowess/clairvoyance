@@ -72,7 +72,7 @@ class TestEcrReporter:
     def test_report(self, tmp_path, ecr_reporter, ecr_content, ecr_apps):
         findings = []
         for content in ecr_content:
-            content["imageScanFindings"] = {"imageScanCompletedAt": str(datetime.now())}
+            content["imageScanFindings"] = {"imageScanCompletedAt": datetime.now()}
             findings.append(content)
 
         ecr_reporter.report(findings)
