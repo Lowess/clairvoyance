@@ -7,7 +7,7 @@ from datetime import datetime
 
 import pytest
 
-from clairvoyance.reporters import EcrReporter
+from clairvoyance.reporters import EcrNativeReporter
 
 
 class TestEcrReporter:
@@ -15,28 +15,28 @@ class TestEcrReporter:
         "reporter,given,expected",
         [
             (
-                EcrReporter(
+                EcrNativeReporter(
                     registry_id=None, repositories=[], allowed_tag_patterns=["latest"]
                 ),
                 "latest",
                 True,
             ),
             (
-                EcrReporter(
+                EcrNativeReporter(
                     registry_id=None, repositories=[], allowed_tag_patterns=["latest"]
                 ),
                 "something",
                 False,
             ),
             (
-                EcrReporter(
+                EcrNativeReporter(
                     registry_id=None, repositories=[], allowed_tag_patterns=["v.*"]
                 ),
                 "v1.0.1",
                 True,
             ),
             (
-                EcrReporter(
+                EcrNativeReporter(
                     registry_id=None, repositories=[], allowed_tag_patterns=["v2.*"]
                 ),
                 "v1.0.2",
@@ -72,7 +72,7 @@ class TestEcrReporter:
     def test_report(self, tmp_path, ecr_reporter, ecr_content, ecr_apps):
         findings = []
         for content in ecr_content:
-            content["imageScanFindings"] = {"imageScanCompletedAt": datetime.now()}
+            content["imageScanFindings"] = {"imageScanCompletedAt": str(datetime.now())}
             findings.append(content)
 
         ecr_reporter.report(findings)

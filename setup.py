@@ -31,7 +31,7 @@ EXTRAS_REQUIRE = {
         "coverage==7.1.0",
         "flake8",
         "isort",
-        "moto @ git+https://github.com/Lowess/moto@0c1b32a0c09974b99f835116225e9ecddf351c0e#egg=moto",
+        "moto<5.0",
         "pytest-cov>=4.0.0",
         "pytest-datafiles>=2.0.1",
         "pytest-env>=0.8.1",
@@ -42,7 +42,7 @@ EXTRAS_REQUIRE = {
         "pytest-xdist>=3.1.0",
         "pytest-lazy-fixture>=0.6.3,<0.7",
         "pytest-sugar>=0.9.4",
-        "pytest>=7.2.1",
+        "pytest>=7.2.1,<8",
     ],
 }
 

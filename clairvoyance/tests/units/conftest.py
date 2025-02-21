@@ -10,7 +10,7 @@ import pytest
 from moto import mock_ecr, mock_sns
 
 from clairvoyance.notifiers import SnsNotifier, StdoutNotifier
-from clairvoyance.reporters.ecr import EcrReporter
+from clairvoyance.reporters.ecr_native import EcrNativeReporter
 from clairvoyance.voyance import Clairvoyance
 
 logger = logging.getLogger()
@@ -91,7 +91,7 @@ def ecr_reporter(
     tmp_path, allowed_patterns, registry_id, ecr_client, ecr_apps, ecr_content
 ):
     """Create an EcrReporter object with a mocked ECR client"""
-    reporter = EcrReporter(
+    reporter = EcrNativeReporter(
         registry_id=registry_id,
         repositories=ecr_apps.keys(),
         allowed_tag_patterns=[allowed_patterns],
