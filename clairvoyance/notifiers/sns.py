@@ -30,5 +30,6 @@ class SnsNotifier(Notifier):
             Message=json.dumps(message, default=str),
         )
         self.__logger.info(
-            f"SNS notification {response['MessageId']} delivered {message}"
+            f"SNS notification {response['MessageId']} delivered successfully"
         )
+        self.__logger.debug(f"SNS message was set to:{message}")
