@@ -7,7 +7,13 @@ from typing import List
 import click
 
 from clairvoyance import settings
-from clairvoyance.notifiers import Notifier, PubSubNotifier, SnsNotifier, StdoutNotifier
+from clairvoyance.notifiers import (
+    Notifier,
+    PubSubNotifier,
+    SnsNotifier,
+    StdoutNotifier,
+    TrivyTableNotifier,
+)
 from clairvoyance.reporters import EcrNativeReporter, EcrTrivyReporter, Reporter
 
 logger = logging.getLogger(__name__)
@@ -97,6 +103,8 @@ def init(report_folder=""):
                         topic_arn=notifier.TOPIC_ARN,
                     )
                 )
+            elif notifier.type == "trivy_table":
+                notifiers.append(TrivyTableNotifier())
             elif notifier.TYPE == "stdout":
                 notifiers.append(StdoutNotifier())
 
