@@ -1,23 +1,14 @@
 # ----------------------------------------
 # Build python & hugo project
 # ----------------------------------------
-FROM peaceiris/hugo:v0.104.3-full as builder
+FROM python:3.10-alpine
 
-ARG HUGO_BASE_URL="/"
-ENV HUGO_BASE_URL=${HUGO_BASE_URL}
+ENV TRIVY_VERSION=v0.18.3
+ENV CLAIRVOYANCE_VERSION=0.0.2
 
-WORKDIR /src
+RUN apk add --no-cache curl build-base linux-headers \
+    && curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin ${TRIVY_VERSION} \
+    && pip install voyance==${CLAIRVOYANCE_VERSION}
 
-COPY . /src
-
-RUN cd /src \
-    && ls -al \
-    && hugo -b ${HUGO_BASE_URL}
-
-# ----------------------------------------
-# Run from nginx
-# ----------------------------------------
-FROM nginx:alpine
-
-COPY --from=builder /src/public /usr/share/nginx/html
-COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+ENTRYPOINT ["voyance"]
+CMD ["--help"]

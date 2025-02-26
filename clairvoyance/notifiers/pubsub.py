@@ -34,7 +34,7 @@ class PubSubNotifier(Notifier):
 
     def send(self, subject: str, message: Dict[str, Any]) -> None:
         # Append the Jira Board ID to the payload
-        message["jiraBoardId"] = self._jira_project_id
+        message["jiraBoardID"] = self._jira_project_id
         message_bytes = json.dumps(message, default=str).encode("utf-8")
 
         future = self._pubsub.publish(self._topic_arn, message_bytes)
