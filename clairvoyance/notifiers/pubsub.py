@@ -39,5 +39,6 @@ class PubSubNotifier(Notifier):
 
         future = self._pubsub.publish(self._topic_arn, message_bytes)
         self.__logger.info(
-            f"PubSub notification {future.result()} delivered {message_bytes}"
+            f"PubSub notification {future.result()} delivered successfully"
         )
+        self.__logger.debug(f"PubSub message was set to:{message_bytes}")
