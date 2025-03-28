@@ -49,7 +49,7 @@ EXTRAS_REQUIRE = {
 
 setup(
     name="voyance",
-    version="0.0.5",
+    version="0.0.6",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     entry_points={

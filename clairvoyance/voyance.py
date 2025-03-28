@@ -48,7 +48,6 @@ class Clairvoyance:
     @timeit
     def scan(self):
         self._findings = self._reporter.analyze()
-
         logger.info(f"{len(self._findings)} scan reports found")
 
     def report(self):
@@ -114,7 +113,7 @@ def init(report_folder=""):
 
         return clairvoyance
     except Exception as e:
-        logger.error(str(e))
+        logger.exception(e)
 
 
 @click.group(invoke_without_command=True)

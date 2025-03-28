@@ -78,9 +78,8 @@ class EcrReporter(Reporter):
                                     digest=image["imageDigest"],
                                 )
                             )
-                    kwargs["nextToken"] = image[
-                        "nextToken"
-                    ]  # raises KeyError on last page
+                    # raises KeyError on last page
+                    kwargs["nextToken"] = images["nextToken"]
             except KeyError:
                 pass
 
