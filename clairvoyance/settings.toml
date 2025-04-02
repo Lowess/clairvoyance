@@ -4,6 +4,7 @@
 
 [default.tracking]
 jira_project_id = "ABC"
+jira_product_squad = "AdPlatform"
 
 [default.reporter]
 # One of from 'trivy' or 'native'

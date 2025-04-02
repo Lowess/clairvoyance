@@ -99,6 +99,7 @@ def init(report_folder=""):
                 notifiers.append(
                     PubSubNotifier(
                         jira_project_id=settings.TRACKING.JIRA_PROJECT_ID,
+                        jira_product_squad=settings.TRACKING.JIRA_PRODUCT_SQUAD,
                         topic_arn=notifier.TOPIC_ARN,
                     )
                 )
