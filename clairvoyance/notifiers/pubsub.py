@@ -42,9 +42,9 @@ class PubSubNotifier(Notifier):
 
         message_bytes = json.dumps(message, default=str).encode("utf-8")
 
-        # future = self._pubsub.publish(self._topic_arn, message_bytes)
-        # self.__logger.info(
-        #     f"PubSub notification {future.result()} delivered successfully"
-        # )
+        future = self._pubsub.publish(self._topic_arn, message_bytes)
+        self.__logger.info(
+            f"PubSub notification {future.result()} delivered successfully"
+        )
 
         self.__logger.info(f"PubSub message was set to:{message_bytes}")
