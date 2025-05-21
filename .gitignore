@@ -8,7 +8,7 @@ hugo_stats.json
 
 # Content and data automatically generated in CI/CD
 /content/reports/
-/data/ecr/
+/data/
 !*.gitkeep
 
 # Ignore secrets
