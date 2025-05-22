@@ -3,13 +3,20 @@
 ################################################
 
 [default.tracking]
-jira_project_id = "ABC"
 jira_product_squad = "AdPlatform"
 
 [default.reporter]
 # One of from 'trivy' or 'native'
 scanner = "trivy"
 options = ["--ignore-unfixed", "--severity", "CRITICAL,HIGH", "--vuln-type", "os,library"]
+
+[default.sbom]
+scanner = "trivy"
+options = ["--ignore-unfixed", "--severity", "CRITICAL,HIGH", "--vuln-type", "library", "--scanners", "vuln,license"]
+## Trivy classes to include in the report
+allowlist = ["os-pkgs","lang-pkgs","license", "license-file"]
+## Path from which the FS scan should be triggered (defaults to working directory)
+# scan_from_path = "/path/to/code/repo"
 
 [default.ecr]
 # The private ECR registry ID to scan reports from

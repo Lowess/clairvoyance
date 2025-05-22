@@ -13,9 +13,7 @@ from clairvoyance.notifiers.notifier import Notifier
 class PubSubNotifier(Notifier):
     __logger = logging.getLogger(__name__)
 
-    def __init__(
-        self, jira_project_id: str, jira_product_squad: str, topic_arn: str
-    ) -> None:
+    def __init__(self, jira_product_squad: str, topic_arn: str) -> None:
         # Load the credentials from an environment variable
         service_account_json = base64.b64decode(
             os.getenv("GOOGLE_CREDENTIALS_BASE64")
@@ -26,7 +24,6 @@ class PubSubNotifier(Notifier):
         )
         self._pubsub = pubsub_v1.PublisherClient(credentials=credentials)
         self._topic_arn = topic_arn
-        self._jira_project_id = jira_project_id
         self._jira_product_squad = jira_product_squad
 
     def __repr__(self) -> str:
@@ -37,8 +34,7 @@ class PubSubNotifier(Notifier):
 
     def send(self, subject: str, message: Dict[str, Any]) -> None:
         # Append the Jira related data to the payload
-        message["jiraBoardID"] = self._jira_project_id
-        message["productSquad"] = self._jira_product_squad
+        message["ProductSquad"] = self._jira_product_squad
 
         message_bytes = json.dumps(message, default=str).encode("utf-8")
 

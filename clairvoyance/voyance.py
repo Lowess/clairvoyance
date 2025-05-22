@@ -1,5 +1,5 @@
-import json
 import logging
+import os
 import time
 from functools import wraps
 from typing import List
@@ -58,7 +58,7 @@ class Clairvoyance:
             for finding in self._findings:
                 subject = "Clairvoyance scan available"
                 if settings.REPORTER.SCANNER == "trivy":
-                    subject = f"{finding['imagePath']}:{finding['commitHash']}"
+                    subject = f"{finding['ComponentName']}"
                 else:
                     subject = (
                         f"{finding['repositoryName']}:{finding['imageId']['imageTag']}"
@@ -85,7 +85,14 @@ def init(report_folder=""):
             reporter = EcrTrivyReporter(
                 **{
                     **reporter_common_params,
-                    **{"trivy_options": settings.REPORTER.OPTIONS},
+                    **{
+                        "trivy_image_options": settings.REPORTER.OPTIONS,
+                        "trivy_fs_options": settings.SBOM.OPTIONS,
+                    },
+                    "trivy_fs_scan_path": settings.SBOM.get(
+                        "scan_from_path", default=os.getcwd()
+                    ),
+                    "trivy_fs_allowlist": settings.SBOM.ALLOWLIST,
                 }
             )
         else:
@@ -98,7 +105,6 @@ def init(report_folder=""):
             elif notifier.TYPE == "pubsub":
                 notifiers.append(
                     PubSubNotifier(
-                        jira_project_id=settings.TRACKING.JIRA_PROJECT_ID,
                         jira_product_squad=settings.TRACKING.JIRA_PRODUCT_SQUAD,
                         topic_arn=notifier.TOPIC_ARN,
                     )
