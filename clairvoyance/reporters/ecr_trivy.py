@@ -233,6 +233,10 @@ class EcrTrivyReporter(EcrReporter):
 
         result = {
             "ComponentName": component_name,
+            "RawReports": {
+                "Image": image_report,
+                "Fs": fs_report,
+            },
             "Vulnerabilities": [],
             "Licenses": [],
         }

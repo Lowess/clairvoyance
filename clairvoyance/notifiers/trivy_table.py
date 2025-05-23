@@ -36,13 +36,13 @@ class TrivyTableNotifier(Notifier):
             return {}
 
     def send(self, subject: str, message: Dict[str, Any]) -> None:
-        # Create and open a temporary file using NamedTemporaryFile
-        with tempfile.NamedTemporaryFile(mode="w+", delete=True) as temp_file:
-            # Dump the JSON data into the temporary file
-            json.dump(message["trivyReport"], temp_file)
+        for report_types in ["Image", "Fs"]:
+            with tempfile.NamedTemporaryFile(mode="w+", delete=True) as temp_file:
+                # Dump the JSON data into the temporary file
+                json.dump(message["RawReports"][report_types], temp_file)
 
-            # Important: flush the buffer so the data is physically written to disk
-            temp_file.flush()
+                # Important: flush the buffer so the data is physically written to disk
+                temp_file.flush()
 
-            # You can access the temporary file's name
-            self._trigger_trivy_convert(temp_file.name)
+                # You can access the temporary file's name
+                self._trigger_trivy_convert(temp_file.name)
