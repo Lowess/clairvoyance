@@ -14,7 +14,7 @@ options = ["--ignore-unfixed", "--severity", "CRITICAL,HIGH", "--vuln-type", "os
 scanner = "trivy"
 options = ["--ignore-unfixed", "--severity", "CRITICAL,HIGH", "--vuln-type", "library", "--scanners", "vuln,license"]
 ## Trivy classes to include in the report
-allowlist = ["os-pkgs","lang-pkgs","license", "license-file"]
+allowlist = ["os-pkgs", "lang-pkgs", "license", "license-file"]
 ## Path from which the FS scan should be triggered (defaults to working directory)
 # scan_from_path = "/path/to/code/repo"
 

@@ -35,6 +35,7 @@ class PubSubNotifier(Notifier):
     def send(self, subject: str, message: Dict[str, Any]) -> None:
         # Append the Jira related data to the payload
         message["ProductSquad"] = self._jira_product_squad
+        message.pop("RawReports", None)
 
         message_bytes = json.dumps(message, default=str).encode("utf-8")
 
