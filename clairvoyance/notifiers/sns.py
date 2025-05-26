@@ -24,6 +24,8 @@ class SnsNotifier(Notifier):
         )
 
     def send(self, subject: str, message: Dict[str, Any]) -> None:
+        message.pop("RawReports", None)
+
         response = self._sns.publish(
             TopicArn=self._topic_arn,
             Subject=subject,
