@@ -2,14 +2,24 @@ import json
 
 import pytest
 
-from clairvoyance.notifiers.sqs import build_queue_url
+from clairvoyance.notifiers.sqs import SqsNotifier
 
 
 class TestSqsNotifier:
-    def test_build_queue_url(self):
+    def test_get_queue_url(self, mocker):
+        sqs_notifier = object.__new__(SqsNotifier)
+        sqs_notifier._sqs = mocker.Mock()
+        sqs_notifier._sqs.get_queue_url.return_value = {
+            "QueueUrl": "https://sqs.us-east-1.amazonaws.com/123456789012/mock"
+        }
+
         assert (
-            build_queue_url("us-east-1", "123456789012", "backstage-trivy-reports")
-            == "https://sqs.us-east-1.amazonaws.com/123456789012/backstage-trivy-reports"
+            sqs_notifier._get_queue_url("mock", "123456789012")
+            == "https://sqs.us-east-1.amazonaws.com/123456789012/mock"
+        )
+        sqs_notifier._sqs.get_queue_url.assert_called_once_with(
+            QueueName="mock",
+            QueueOwnerAWSAccountId="123456789012",
         )
 
     def test_sqs(self, sqs_client, sqs_notifier, sqs_queue_url):

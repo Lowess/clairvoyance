@@ -4,7 +4,7 @@
 FROM python:3.12-alpine
 
 ENV TRIVY_VERSION=v0.71.0
-ENV CLAIRVOYANCE_VERSION=1.1.0
+ENV CLAIRVOYANCE_VERSION=1.1.1
 
 RUN apk add --no-cache curl build-base linux-headers \
     && curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin ${TRIVY_VERSION} \

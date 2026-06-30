@@ -7,10 +7,6 @@ import boto3
 from clairvoyance.notifiers.notifier import Notifier
 
 
-def build_queue_url(region: str, account_id: str, queue_name: str) -> str:
-    return f"https://sqs.{region}.amazonaws.com/{account_id}/{queue_name}"
-
-
 class SqsNotifier(Notifier):
     __logger = logging.getLogger(__name__)
 
@@ -23,7 +19,7 @@ class SqsNotifier(Notifier):
     ) -> None:
         self._sqs = boto3.client("sqs", region_name=region)
         self._jira_product_squad = jira_product_squad
-        self._queue_url = build_queue_url(region, account_id, queue_name)
+        self._queue_url = self._get_queue_url(queue_name, account_id)
 
     def __repr__(self) -> str:
         return (
@@ -40,6 +36,13 @@ class SqsNotifier(Notifier):
             "Vulnerabilities": message.get("Vulnerabilities", []),
             "Licenses": message.get("Licenses", []),
         }
+
+    def _get_queue_url(self, queue_name: str, account_id: str) -> str:
+        response = self._sqs.get_queue_url(
+            QueueName=queue_name,
+            QueueOwnerAWSAccountId=account_id,
+        )
+        return response["QueueUrl"]
 
     def send(self, subject: str, message: Dict[str, Any]) -> None:
         payload = self._scan_result_payload(subject, message)
