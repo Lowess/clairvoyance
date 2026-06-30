@@ -47,6 +47,13 @@ type = "stdout"
 # type = "pubsub"
 # topic_arn = "projects/<GCP_PROJECT_ID>/topics/<PUBSUB_TOPIC_NAME>"
 
+## Turns on SQS notifications for Backstage security and compliance reporting
+# [[default.notifiers]]
+# type = "sqs"
+# region = "us-east-1"
+# account_id = "123456789012"
+# queue_name = "backstage-trivy-reports"
+
 ################################################
 ### Advanced section
 ################################################

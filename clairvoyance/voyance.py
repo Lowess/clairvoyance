@@ -11,6 +11,7 @@ from clairvoyance.notifiers import (
     Notifier,
     PubSubNotifier,
     SnsNotifier,
+    SqsNotifier,
     StdoutNotifier,
     TrivyTableNotifier,
 )
@@ -107,6 +108,15 @@ def init(report_folder=""):
                     PubSubNotifier(
                         jira_product_squad=settings.TRACKING.JIRA_PRODUCT_SQUAD,
                         topic_arn=notifier.TOPIC_ARN,
+                    )
+                )
+            elif notifier.TYPE == "sqs":
+                notifiers.append(
+                    SqsNotifier(
+                        jira_product_squad=settings.TRACKING.JIRA_PRODUCT_SQUAD,
+                        region=notifier.REGION,
+                        account_id=notifier.ACCOUNT_ID,
+                        queue_name=notifier.QUEUE_NAME,
                     )
                 )
             elif notifier.type == "trivy_table":

@@ -3,31 +3,40 @@
 
 import json
 import logging
+import os
 
 import boto3
 import helpers
 import pytest
-from moto import mock_ecr, mock_sns
+from moto import mock_ecr, mock_sns, mock_sqs
 
-from clairvoyance.notifiers import SnsNotifier, StdoutNotifier
+from clairvoyance.notifiers import SnsNotifier, SqsNotifier, StdoutNotifier
 from clairvoyance.reporters.ecr_native import EcrNativeReporter
 from clairvoyance.voyance import Clairvoyance
 
 logger = logging.getLogger()
+os.environ.setdefault("AWS_DEFAULT_REGION", "us-east-1")
 
 
 @pytest.fixture
 def ecr_client():
     """Mock ECR client"""
     with mock_ecr():
-        yield boto3.client("ecr")
+        yield boto3.client("ecr", region_name="us-east-1")
 
 
 @pytest.fixture
 def sns_client():
     """Mock SNS client"""
     with mock_sns():
-        yield boto3.client("sns")
+        yield boto3.client("sns", region_name="us-east-1")
+
+
+@pytest.fixture
+def sqs_client():
+    """Mock SQS client"""
+    with mock_sqs():
+        yield boto3.client("sqs", region_name="us-east-1")
 
 
 @pytest.fixture
@@ -82,6 +91,17 @@ def sns_topic(sns_client):
 
 
 @pytest.fixture
+def sqs_queue_name():
+    return "mock"
+
+
+@pytest.fixture
+def sqs_queue_url(sqs_client, sqs_queue_name):
+    """Mock SQS queue and return the queue URL"""
+    return sqs_client.create_queue(QueueName=sqs_queue_name)["QueueUrl"]
+
+
+@pytest.fixture
 def allowed_patterns():
     return ["v.*", "latest"]
 
@@ -108,6 +128,20 @@ def sns_notifier(sns_client, sns_topic):
     notifier = SnsNotifier(topic_arn=sns_topic)
     # Subsititue with mocked boto client
     notifier._sns = sns_client
+    yield notifier
+
+
+@pytest.fixture
+def sqs_notifier(sqs_client, sqs_queue_name, sqs_queue_url):
+    """Create an SqsNotifier object with a mocked SQS client"""
+    notifier = SqsNotifier(
+        jira_product_squad="AdPlatform",
+        region="us-east-1",
+        account_id="123456789012",
+        queue_name=sqs_queue_name,
+    )
+    # Subsititue with mocked boto client
+    notifier._sqs = sqs_client
     yield notifier
 
 
