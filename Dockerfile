@@ -1,9 +1,9 @@
 # ----------------------------------------
 # Build python & hugo project
 # ----------------------------------------
-FROM python:3.10-alpine
+FROM python:3.12-alpine
 
-ENV TRIVY_VERSION=v0.62.1
+ENV TRIVY_VERSION=v0.71.0
 ENV CLAIRVOYANCE_VERSION=1.1.0
 
 RUN apk add --no-cache curl build-base linux-headers \
